@@ -1,0 +1,1 @@
+# Silbentrennen-Algo
