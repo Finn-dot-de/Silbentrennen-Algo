@@ -34,10 +34,10 @@ class Silbentrennung:
         wortlaenge = len(wort)
 
         while i < wortlaenge:
-            aktuelle_silbe += wort[i]  # Füge aktuellen Buchstaben zur Silbe hinzu
+            aktuelle_silbe += wort[i]
 
+            # Prüfe Vokal-Konsonant-Vokal-Muster
             if self.__ist_vokal(wort[i]):
-                # Wenn ein Vokal gefunden wird, könnte die Silbe abgeschlossen sein
                 konsonantenfolge = ""
                 j = i + 1
 
@@ -46,23 +46,23 @@ class Silbentrennung:
                     konsonantenfolge += wort[j]
                     j += 1
 
+                # Bei Konsonanten zwischen Vokalen:
                 if konsonantenfolge:
-                    # Überprüfe untrennbare Konsonantenverbindungen
-                    if self.__ist_untrennbare_konsonantenverbindung(konsonantenfolge[:2]):
-                        # Untrennbare Konsonantenverbindung hinzufügen
-                        aktuelle_silbe += konsonantenfolge[:2]
-                        i += len(konsonantenfolge[:2])  # Überspringe die Länge der Verbindung
-                    elif len(konsonantenfolge) > 1:
-                        # Bei mehreren Konsonanten den letzten Konsonanten in die nächste Silbe verschieben
-                        aktuelle_silbe += konsonantenfolge[:-1]
-                        i += len(konsonantenfolge) - 1
-                    else:
-                        # Ein einzelner Konsonant kommt zur nächsten Silbe
+                    if len(konsonantenfolge) == 1:
+                        # Ein einzelner Konsonant geht zur nächsten Silbe (Fa·mi·lie)
                         aktuelle_silbe += konsonantenfolge
                         i += 1
+                    elif self.__ist_untrennbare_konsonantenverbindung(konsonantenfolge[:2]):
+                        # Untrennbare Konsonantenverbindung bleibt in einer Silbe (Schmet·ter·ling)
+                        aktuelle_silbe += konsonantenfolge[:2]
+                        i += 2
+                    else:
+                        # Mehrere Konsonanten: alles außer letztem Konsonanten zur aktuellen Silbe
+                        aktuelle_silbe += konsonantenfolge[:-1]
+                        i += len(konsonantenfolge) - 1
 
-                    # Füge die Silbe hinzu, wenn sie mindestens einen Vokal und zwei Buchstaben enthält
-                    if any(self.__ist_vokal(b) for b in aktuelle_silbe) and len(aktuelle_silbe) >= 2:
+                    # Füge die Silbe hinzu
+                    if any(self.__ist_vokal(b) for b in aktuelle_silbe):
                         silben.append(aktuelle_silbe)
                         aktuelle_silbe = ""
                 else:
@@ -72,7 +72,7 @@ class Silbentrennung:
 
             i += 1
 
-        # Füge letzte Silbe hinzu, falls noch Inhalt vorhanden ist
+        # Füge letzte Silbe hinzu
         if aktuelle_silbe:
             silben.append(aktuelle_silbe)
 
